@@ -46,7 +46,7 @@ try:
             repo, config['repos'][repo], config[repo], connectionName))
     
     #loop for check reporitory changes
-    if True:
+    while True:
         for run_repo in repos:
             p = None
             p = threading.Thread(target=run_repo.run)

@@ -35,8 +35,6 @@ class repositori():
         changes = len(list(repo.iter_commits('origin/des'))) - \
             len(list(repo.iter_commits('des')))
 
-        changes = 1;
-
         if changes > 0 or is_repo_new:
 
             repo.git.pull('--all')
@@ -48,8 +46,11 @@ class repositori():
                 files_modified = list(repo.git.log(
                     '-{}'.format(changes), '--name-only', "--pretty=format:''").split(sep='\n'))
 
-            if "''" in files_modified:
+            while "''" in files_modified:
                 files_modified.remove("''")
+
+            while '' in files_modified:
+                files_modified.remove('')
 
             files_correct = []
 
@@ -67,6 +68,9 @@ class repositori():
 
                 if not add:
                     files_correct.append(list_f)
+
+            print(files_modified)
+            print(files_correct)
             
             self.list_local_files = files_modified
             self.list_remote_files = files_correct
@@ -93,11 +97,13 @@ class repositori():
 
     #Start function for the objects repositori
     def run(self):
+        print("Scann")
         if self.get_git():
             self.send_ftp()
 
 #function to upload a file
 def ftp_upload(localfile, remotefile, ftp):
+    print("ftp_upload: ",localfile, remotefile, ftp)
     fp = open(localfile, 'rb')
     try:
         ftp.storbinary('STOR %s' % remotefile, fp, 1024)
@@ -133,8 +139,8 @@ def directory_exists(dir, folder, ftp):
     ftp.retrlines('LIST', filelist.append)
     for f in filelist:
         if f.split()[-1] == folder and f.upper().startswith('D'):
-            print('si lo encontro')
+            print('Exists', folder)
             return True
-    print('No lo encontro')
+    print('No Exists', folder)
     return False
     
